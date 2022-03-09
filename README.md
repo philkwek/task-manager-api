@@ -1,5 +1,5 @@
 # task-manager-api
- Simple API made using Node.Js and Firebase for a To-do app.
+ Simple API made using Node.Js and Firebase Functions & Firestore for a To-do app.
  
  ## What's this for?
  This API was made in conjuction with my React To-Do webapp. However, you can use this API in any other application, as long as you can perform REST functions! Currently, it supports creation of user accounts, but all tasks created is global and can be viewed by anyone (Authentication & Private Tasks coming soon!).

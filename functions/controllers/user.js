@@ -9,7 +9,6 @@ import express from 'express';
 import cors from 'cors';
 
 const userApp = express();
-
 userApp.use(cors({origin: true}));
 
 userApp.get('/', async (req, res) => { //gets all data from firestore
@@ -35,20 +34,21 @@ userApp.get("/:id", async(req, res) => { //for getting a specific user's profile
     res.status(200).send(JSON.stringify({id: userId, ...userData}));
 })
 
-userApp.post('/', async (req, res) => { //post request to add a user
+userApp.post('/:id', async (req, res) => { //post request to create a new user
     const user = req.body;
+    const userId = req.params.id;
 
     if (user != ""){
-        await db.collection('users').add(user);
+        await db.collection('users').doc(userId).set(user);
 
-        res.status(201).send();
+        res.status(201).send(user);
     } else {
         res.status(500).send("No user data found!");
     }
 
-})
+});
 
-userApp.put("/:id", async (req, res) => {
+userApp.put("/:id", async (req, res) => { //update account data
     const body = req.body;
 
     await db.collection('users').doc(req.params.id).update(body);
@@ -56,7 +56,7 @@ userApp.put("/:id", async (req, res) => {
     res.status(200).send();
 });
 
-userApp.delete("/:id", async(req, res) => {
+userApp.delete("/:id", async(req, res) => { //delete user account data
     await db.collection('users').doc(req.params.id).delete();
 
     res.status(200).send();

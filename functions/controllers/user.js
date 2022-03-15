@@ -45,7 +45,29 @@ userApp.post('/:id', async (req, res) => { //post request to create a new user
     } else {
         res.status(500).send("No user data found!");
     }
+});
 
+userApp.post('/friends/:id', async(req, res) => { //add friends to user using email
+    
+    const email = req.body.email;
+    const userId = req.params.id;
+    console.log(email);
+
+    const snapshot = await db.collection('users').where('email', '==', email).limit(1).get();
+
+    if (snapshot.empty) {
+        res.status(400).send('No user found!');
+        return
+    };
+    
+    let friendId;
+    let data;
+    snapshot.forEach(doc => {
+        friendId = doc.id;
+        data = doc.data();
+    })
+    await db.collection('users').doc(userId).collection('friends').doc(friendId).set(data);
+    res.status(200).send();
 });
 
 userApp.put("/:id", async (req, res) => { //update account data

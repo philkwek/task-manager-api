@@ -34,6 +34,21 @@ userApp.get("/:id", async(req, res) => { //for getting a specific user's profile
     res.status(200).send(JSON.stringify({id: userId, ...userData}));
 })
 
+userApp.get("/friends/:id", async(req, res) => { //for getting friend list
+    const snapshot = await db.collection('users').doc(req.params.id).collection('friends').get();
+
+    let friendList = [];
+    snapshot.forEach(doc => {
+        let id = doc.id;
+
+        let data = doc.data();
+        
+        friendList.push({id, ...data});
+    });
+
+    res.status(200).send(JSON.stringify(friendList));
+});
+
 userApp.post('/:id', async (req, res) => { //post request to create a new user
     const user = req.body;
     const userId = req.params.id;
@@ -51,7 +66,6 @@ userApp.post('/friends/:id', async(req, res) => { //add friends to user using em
     
     const email = req.body.email;
     const userId = req.params.id;
-    console.log(email);
 
     const snapshot = await db.collection('users').where('email', '==', email).limit(1).get();
 
@@ -59,7 +73,7 @@ userApp.post('/friends/:id', async(req, res) => { //add friends to user using em
         res.status(400).send('No user found!');
         return
     };
-    
+
     let friendId;
     let data;
     snapshot.forEach(doc => {

@@ -4,9 +4,9 @@
 
 import { db } from './firebaseApp.js';
 
-import functions from 'firebase-functions';
-import express from 'express';
-import cors from 'cors';
+import * as functions from 'firebase-functions';
+import * as express from 'express';
+import * as cors from 'cors';
 
 const userApp = express();
 userApp.use(cors({origin: true}));
@@ -14,9 +14,10 @@ userApp.use(cors({origin: true}));
 userApp.get('/', async (req, res) => { //gets all data from firestore
     const snapshot = await db.collection('users').get();
 
-    let users = [];
-    snapshot.forEach(doc => {
+    let users: Array<object> = [];
+    snapshot.forEach((doc: { id: string; data: () => any; }) => {
         let id = doc.id;
+
         let data = doc.data();
 
         users.push({id, ...data});
@@ -37,8 +38,8 @@ userApp.get("/:id", async(req, res) => { //for getting a specific user's profile
 userApp.get("/friends/:id", async(req, res) => { //for getting friend list
     const snapshot = await db.collection('users').doc(req.params.id).collection('friends').get();
 
-    let friendList = [];
-    snapshot.forEach(doc => {
+    let friendList: Array<object> = [];
+    snapshot.forEach((doc: { id: string; data: () => any; }) => {
         let id = doc.id;
 
         let data = doc.data();
@@ -76,7 +77,7 @@ userApp.post('/friends/:id', async(req, res) => { //add friends to user using em
 
     let friendId;
     let data;
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc: { id: string; data: () => any; }) => {
         friendId = doc.id;
         data = doc.data();
     })
